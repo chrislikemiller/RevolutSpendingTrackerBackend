@@ -17,6 +17,7 @@ namespace RevolutSpendings.API.Controllers
 		[HttpGet("{month}")]
 		public IActionResult GetSpendingsByMonth(int month)
 		{
+			// todo: transform to presentation objects 
 			var spendings = spendingService.GetSpendingsByMonth(month);
 			return Ok(spendings);
 		}
@@ -24,6 +25,7 @@ namespace RevolutSpendings.API.Controllers
 		[HttpGet]
 		public IActionResult GetSpendings()
 		{
+			// todo: transform to presentation objects 
 			var spendings = spendingService.GetAllSpendings();
 			return Ok(spendings);
 		}

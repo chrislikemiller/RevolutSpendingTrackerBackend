@@ -8,5 +8,5 @@ Accept: application/json
 ###
 
 
-GET {{Spendings_HostAddress}}/spending/0
+GET {{Spendings_HostAddress}}/spending/2
 Accept: application/json
