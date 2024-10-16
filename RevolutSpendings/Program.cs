@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RevolutSpendings.API.Persistence;
 using RevolutSpendings.API.Services;
+using System;
 
 namespace RevolutSpendings.API
 {
@@ -21,19 +22,14 @@ namespace RevolutSpendings.API
 						.AllowCredentials());
 			});
 
+			builder.Logging.AddDebug();
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
-			builder.Services.AddDbContext<SpendingContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 			AddDependencies(builder);
 
 			var app = builder.Build();
-
-			using (var scope = app.Services.CreateScope())
-			{
-				var dbContext = scope.ServiceProvider.GetRequiredService<SpendingContext>();
-				dbContext.Database.Migrate();  
-			}
+			SetupMigration(app);
 
 			if (app.Environment.IsDevelopment())
 			{
@@ -52,9 +48,21 @@ namespace RevolutSpendings.API
 			app.Run();
 		}
 
+		private static void SetupMigration(WebApplication app)
+		{
+			using (var scope = app.Services.CreateScope())
+			{
+				var dbContext = scope.ServiceProvider.GetRequiredService<SpendingContext>();
+				dbContext.Database.Migrate();
+			}
+		}
+
 		private static void AddDependencies(WebApplicationBuilder builder)
 		{
-			builder.Services.AddScoped(typeof(SpendingService));
+			builder.Services.AddDbContext<SpendingContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+			builder.Services.AddScoped(typeof(ISpendingService), typeof(SpendingService));
+			builder.Services.AddScoped<IDatabaseAccessService>(provider => provider.GetRequiredService<SpendingContext>());
 		}
 	}
 }

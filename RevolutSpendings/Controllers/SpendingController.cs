@@ -8,24 +8,24 @@ namespace RevolutSpendings.API.Controllers
 	[Route("[controller]")]
 	public class SpendingController : ControllerBase
 	{
-		private readonly SpendingService spendingService;
+		private readonly ISpendingService spendingService;
 
-		public SpendingController(SpendingService spendingService)
+		public SpendingController(ISpendingService spendingService)
 		{
 			this.spendingService = spendingService;
 		}
 
 		[HttpPost("byMonth")]
-		public IActionResult GetSpendingsByMonth(GetSpendingByMonthRequest request)
+		public async Task<IActionResult> GetSpendingsByMonth(GetSpendingByMonthRequest request)
 		{
-			var spendings = spendingService.GetSpendingsByMonth(request.Month);
+			var spendings = await spendingService.GetSpendingsByMonth(request.Month);
 			return Ok(spendings);
 		}
 
 		[HttpGet]
-		public IActionResult GetSpendings()
+		public async Task<IActionResult> GetSpendings()
 		{
-			var spendings = spendingService.GetAllSpendings();
+			var spendings = await spendingService.GetAllSpendings();
 			return Ok(spendings);
 		}
 	}

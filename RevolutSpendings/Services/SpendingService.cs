@@ -6,44 +6,50 @@ using System.Diagnostics;
 
 namespace RevolutSpendings.API.Services
 {
-	public class SpendingService
+	public class SpendingService : ISpendingService
 	{
-		private readonly SpendingContext spendingContext;
+		private readonly IDatabaseAccessService databaseAccess;
+		private readonly ILogger<ISpendingService> logger;
 
-		// todo: introduce logger
-		public SpendingService(SpendingContext spendingContext)
+		public SpendingService(IDatabaseAccessService databaseAccess, ILogger<ISpendingService> logger)
 		{
-			this.spendingContext = spendingContext;
+			this.databaseAccess = databaseAccess;
+			this.logger = logger;
 		}
 
-		public IEnumerable<Spending> GetAllSpendings()
+		public Task<IEnumerable<Spending>> GetAllSpendings()
 		{
-			return spendingContext.Spendings;
+			try
+			{
+				return databaseAccess.GetAllSpendings();
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, $"Failed to get all spendings");
+			}
+			return Task.FromResult(Enumerable.Empty<Spending>());
 		}
 
-		public IEnumerable<Spending> GetSpendingsByMonth(int month)
+		public async Task<IEnumerable<Spending>> GetSpendingsByMonth(int month)
 		{
-			var spendings = spendingContext.Spendings;
-
+			var list = new List<Spending>();
+			var spendings = await GetAllSpendings();
 			foreach (var spending in spendings)
 			{
-				DateTime date = new();
-				try
+				if (DateTime.TryParse(spending.Date, out var date))
 				{
 					date = DateTime.Parse(spending.Date);
+					if (date.Month == month)
+					{
+						list.Add(spending);
+					}
 				}
-				catch (Exception ex)
+				else
 				{
-					Trace.WriteLine(ex);
-					yield break;
-				}
-
-				// angular counts 0 as January, .NET counts it as 1
-				if (date.Month == month + 1)
-				{
-					yield return spending;
+					logger.LogError($"Failed to parse date for spending {spending.Id}");
 				}
 			}
+			return list;
 		}
 	}
 }
