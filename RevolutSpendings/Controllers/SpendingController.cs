@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RevolutSpendings.API.Models;
 using RevolutSpendings.API.Services;
 
 namespace RevolutSpendings.API.Controllers
@@ -14,18 +15,16 @@ namespace RevolutSpendings.API.Controllers
 			this.spendingService = spendingService;
 		}
 
-		[HttpGet("{month}")]
-		public IActionResult GetSpendingsByMonth(int month)
+		[HttpPost("byMonth")]
+		public IActionResult GetSpendingsByMonth(GetSpendingByMonthRequest request)
 		{
-			// todo: transform to presentation objects 
-			var spendings = spendingService.GetSpendingsByMonth(month);
+			var spendings = spendingService.GetSpendingsByMonth(request.Month);
 			return Ok(spendings);
 		}
 
 		[HttpGet]
 		public IActionResult GetSpendings()
 		{
-			// todo: transform to presentation objects 
 			var spendings = spendingService.GetAllSpendings();
 			return Ok(spendings);
 		}
