@@ -9,7 +9,6 @@ namespace RevolutSpendings.API.Persistence
 
 		public SpendingContext() 
 		{
-
 		}
 
 		public SpendingContext(DbContextOptions options) : base(options)

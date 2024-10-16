@@ -13,7 +13,7 @@ namespace RevolutSpendings.API
 			builder.Services.AddControllers();
 			builder.Services.AddCors(options =>
 			{
-				options.AddPolicy("AllowAngularApp",
+				options.AddPolicy("myfrontend",
 					builder => builder
 						.WithOrigins("http://localhost:4200")
 						.AllowAnyMethod()
@@ -45,7 +45,7 @@ namespace RevolutSpendings.API
 
 			app.UseAuthorization();
 
-			app.UseCors("AllowAngularApp");
+			app.UseCors("myfrontend");
 
 			app.MapControllers();
 

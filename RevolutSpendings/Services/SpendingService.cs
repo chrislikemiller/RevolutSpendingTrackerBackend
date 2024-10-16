@@ -14,11 +14,6 @@ namespace RevolutSpendings.API.Services
 		public SpendingService(SpendingContext spendingContext)
 		{
 			this.spendingContext = spendingContext;
-
-			// temp
-			//	var json = File.ReadAllText("revolut.json");
-			//	var temp = JsonConvert.DeserializeObject<Spending[]>(json);
-			//	AddDatabase(temp);
 		}
 
 		public IEnumerable<Spending> GetAllSpendings()
@@ -42,29 +37,13 @@ namespace RevolutSpendings.API.Services
 					Trace.WriteLine(ex);
 					yield break;
 				}
-				if (date.Month == month + 1) // angular counts 0 as January, .NET counts it as 1
+
+				// angular counts 0 as January, .NET counts it as 1
+				if (date.Month == month + 1)
 				{
 					yield return spending;
 				}
 			}
 		}
-
-
-		//private void AddDatabase(IEnumerable<Spending> spendings)
-		//{
-		//	try
-		//	{
-		//		foreach (var spending in spendings)
-		//		{
-		//			spendingContext.Spendings.Add(spending);
-		//			spendingContext.SaveChanges();
-		//		}
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		Trace.WriteLine(ex);
-		//	}
-		//}
-
 	}
 }
